@@ -1,0 +1,7 @@
+[
+    {"NewConfirmed":1,"TotalConfirmed":6,"NewDeaths":1,"TotalDeaths":13,"NewRecovered":1,"TotalRecovered":15},
+    {"NewConfirmed":2,"TotalConfirmed":12,"NewDeaths":6,"TotalDeaths":19,"NewRecovered":3,"TotalRecovered":18},
+    {"NewConfirmed":3,"TotalConfirmed":15,"NewDeaths":2,"TotalDeaths":22,"NewRecovered":2,"TotalRecovered":20},
+    {"NewConfirmed":4,"TotalConfirmed":19,"NewDeaths":4,"TotalDeaths":26,"NewRecovered":12,"TotalRecovered":32},
+    {"NewConfirmed":5,"TotalConfirmed":22,"NewDeaths":3,"TotalDeaths":29,"NewRecovered":11,"TotalRecovered":43}
+]

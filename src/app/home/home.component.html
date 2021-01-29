@@ -1,0 +1,218 @@
+<div class="row">
+    <div class="col-sm-6">
+        <h4>Welcome {{ user.displayName }}</h4>
+    </div>
+
+    
+
+    <div class="col-sm-6 text-right">
+        <button class="btn btn-dark" (click)="covidService.signOut()">Sign Out</button>
+    </div>
+
+
+
+
+<div class="container my-5">
+    <div class="text-center">
+        <img 
+        style="width: 25%"
+        src="https://firebasestorage.googleapis.com/v0/b/covid-eb957.appspot.com/o/corona.png?alt=media&token=231b7ab1-d61c-4199-8a96-9b3eb170bbbe" 
+        alt="covid image"/>
+        <h1>Live Updates and Statistics</h1>
+        
+        <br/>
+    </div>
+    
+    <div class="p-3 mb-2 bg-dark text-white">Corona Virus Summary Worldwide</div>
+    <br>
+    <table class="table table-bordered table-striped">
+        
+        <tbody>
+            <tr style="background-color:#90ece0">
+                <td>Total cases</td>
+                <td align="right">{{summary?.Global?.TotalConfirmed | number}}</td>
+            </tr>
+            <tr style="background-color:#90ece0">
+                <td>New Cases</td>
+                <td align="right">{{summary?.Global?.NewConfirmed | number}}</td>
+            </tr>
+            <tr style="background-color:#90ece0">
+                <td>Active Cases</td>
+                <td align="right">{{activeCase | number}}</td>
+            </tr>
+
+            <tr style="background-color:#80fc91">
+                <td>Total Recovered</td>
+                <td align="right">{{summary?.Global?.TotalRecovered | number}}</td>
+            </tr>
+            <tr style="background-color:#80fc91">
+                <td>New recovered</td>
+                <td align="right">{{summary?.Global?.NewRecovered | number}}</td>
+            </tr>
+            <tr style="background-color:#80fc91">
+                <td>Recovery Rate</td>
+                <td align="right">{{recoveryRate}}%</td>
+            </tr>
+
+            <tr style="background-color:#ffad33">
+                <td>Total Deaths</td>
+                <td align="right">{{summary?.Global?.TotalDeaths | number}}</td>
+            </tr>
+            <tr style="background-color:#ffad33">
+                <td>New Deaths</td>
+                <td align="right">{{summary?.Global?.NewDeaths | number}}</td>
+            </tr>
+            <tr style="background-color:#ffad33">
+                <td>Mortality Rate</td>
+                <td align="right">{{mortalityRate}}%</td>
+            </tr>
+
+
+        </tbody>
+    </table>  
+    <br><br><br>
+    <div class="p-3 mb-2 bg-dark text-white">Corona Virus Cases Distribution Worldwide</div>
+    <br>
+    <div class="chart-wrapper">
+        <canvas baseChart
+        [colors]="piechartColors"
+        [data]="pieChartData" 
+        [labels]="pieChartLabels" 
+        [chartType]="pieChartType"
+        [options]="pieChartOptions"
+        [plugins]="pieChartPlugins"
+        [legend]="pieChartLegend">
+      </canvas>
+    </div>
+
+
+    <br><br><br>
+    <div class="p-3 mb-2 bg-dark text-white">Daily Corona Virus Cases Worldwide</div>
+    <br>
+
+    <div class="chart-wrapper">
+        <canvas baseChart 
+        [colors]="barChartColors"
+        [datasets]="barChartData"
+        [labels]="barChartLabels"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [legend]="barChartLegend"
+        [chartType]="barChartType">
+      </canvas>
+    </div>
+    
+    <br><br><br>
+
+
+    
+ 
+    <div class="p-3 mb-2 bg-dark text-white">Total Corona Virus Cases Worldwide</div>
+    
+    <br>
+    <div class="chartjs-block">
+        <canvas baseChart 
+            [datasets]="lineChartData" 
+            [labels]="lineChartLabels" 
+            [options]="lineChartOptions"
+            [colors]="lineChartColor" 
+            [legend]="lineChartLegend" 
+            [chartType]="lineChartType" 
+            [plugins]="lineChartPlugins">
+        </canvas>
+    </div>
+
+    <br><br><br>
+
+    <div class="p-3 mb-2 bg-dark text-white">Corona Virus Cases by Country</div>
+    <div class="container my-5">
+        <div class="text-center">
+            <table class="table table-bordered table-striped">
+                
+                <thead>
+                    <tr>
+                      <th scope="col" class="bg-dark text-white">Country
+                        <br>
+                        <p class="btn-group dropup">
+                            <button type="button" class="btn btn-lg dropdown-toggle" style="color:#ffffff" (click)="getInvSortedData(0)"></button>
+                        </p>
+                            <button type="button" class="btn btn-lg dropdown-toggle" style="color:#ffffff" (click)="getSortedData(0)"></button>
+                    
+
+
+                      </th>
+                        <th scope="col" style="background-color:#90ece0">
+                        New Cases
+                            <p class="btn-group dropup">
+                                <button type="button" class="btn btn-lg dropdown-toggle" (click)="getInvSortedData(1)" ></button>
+                            </p>
+                                <button type="button" class="btn btn-lg dropdown-toggle" (click)="getSortedData(1)"></button>
+                        </th>
+
+                        <th scope="col" style="background-color:#90ece0">Total Cases
+                            <p class="btn-group dropup">
+                                <button type="button" class="btn btn-lg dropdown-toggle" (click)="getInvSortedData(2)"></button>
+                            </p>
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getSortedData(2)"></button>    
+                        </th>
+
+                      <th scope="col" style="background-color:#80fc91">New Recoveries
+                        <p class="btn-group dropup">
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getInvSortedData(3)"></button>
+                        </p>
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getSortedData(3)"></button>
+                    </th>
+                      <th scope="col"style="background-color:#80fc91">Total Recoveries
+                        <p class="btn-group dropup">
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getInvSortedData(4)"></button>
+                        </p>
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getSortedData(4)"></button>
+                    </th>
+                      <th scope="col"style="background-color:#ffad33">New Deaths
+                        <p class="btn-group dropup">
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getInvSortedData(5)"></button>
+                        </p>
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getSortedData(5)"></button>
+                    </th>
+                      <th scope="col"style="background-color:#ffad33">Total Deaths
+                        <p class="btn-group dropup">
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getInvSortedData(6)"></button>
+                        </p>
+                            <button type="button" class="btn btn-lg dropdown-toggle" (click)="getSortedData(6)"></button>
+                    </th>
+                    </tr>              
+                  </thead>
+                  <tbody  *ngFor="let country of summary?.Countries">
+                <tr>
+            <td class="bg-dark text-white" >
+            <a routerLink="/country/{{country.Slug}}" style="color:#ffffff">{{country.Country}}</a>    </td>
+            <td style="background-color:#90ece0" align="right">{{country.NewConfirmed | number}}</td>
+            <td style="background-color:#90ece0" align="right">{{country.TotalConfirmed | number}}</td>
+            <td style="background-color:#80fc91" align="right">{{country.NewRecovered | number}}</td>
+            <td style="background-color:#80fc91" align="right">{{country.TotalRecovered | number}}</td>
+            <td style="background-color:#ffad33" align="right">{{country.NewDeaths | number}}</td>
+            <td style="background-color:#ffad33" align="right">{{country.TotalDeaths | number}}</td>            
+                </tr>
+                </tbody>
+            </table>           
+        </div>
+    </div>
+    
+    
+    <div class="p-3 mb-2 bg-dark text-white" align="center">Data Source:
+        <a href="https://covid19api.com/">COVID-19 API</a>
+        /
+        <a href = "https://coronavirus.jhu.edu/map.html">Johns Hopkins CSSE</a>
+        //
+        <a href="https://corona.lmao.ninja/">disease.sh</a>
+        
+    </div>
+
+
+</div>
+
+
+
+
+
+

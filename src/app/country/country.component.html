@@ -1,0 +1,115 @@
+<div class="container my-5">
+    <div class="text-center">
+        <img 
+        style="width: 25%"
+        src="https://firebasestorage.googleapis.com/v0/b/covid19-a8434.appspot.com/o/corona.png?alt=media&token=45ab8701-95e3-4b92-917d-6fba849c69f2" 
+        alt="covid image"/>
+        <h1>Live Updates and Statistics</h1>
+        
+        <br/>
+    
+        <div class="p-3 mb-2 bg-dark text-white">
+            <a routerLink="/home/">Worlwide</a> 
+        > {{nameCountry}}</div>
+    </div>  
+
+    <div class="p-3 mb-2 bg-dark text-white">Corona Virus Summary in {{nameCountry}}</div>
+    <br>
+    <table class="table table-bordered table-striped">    
+        <tbody>
+            <tr style="background-color:#90ece0">
+                <td align="left">Total cases</td>
+                <td align="right">{{country.TotalConfirmed! | number}}</td>
+            </tr>
+            <tr style="background-color:#90ece0">
+                <td align="left">New Cases</td>
+                <td align="right">{{country.NewConfirmed | number}}</td>
+            </tr>
+            <tr style="background-color:#90ece0">
+                <td align="left">Active Cases</td>
+                <td align="right">{{activeCase | number}}</td>
+            </tr>
+            <tr style="background-color:#80fc91">
+                <td align="left">Total Recovered</td>
+                <td align="right">{{country.TotalRecovered | number}}</td>
+            </tr>
+            <tr style="background-color:#80fc91">
+                <td align="left">New recovered</td>
+                <td align="right">{{country.NewRecovered | number}}</td>
+            </tr>
+            <tr style="background-color:#80fc91">
+                <td align="left">Recovery Rate</td>
+                <td align="right">{{recoveryRate}}%</td>
+            </tr>
+            <tr style="background-color:#ffad33">
+                <td align="left">Total Deaths</td>
+                <td align="right">{{country.TotalDeaths | number}}</td>
+            </tr>
+            <tr style="background-color:#ffad33">
+                <td align="left">New Deaths</td>
+                <td align="right">{{country.NewDeaths | number}}</td>
+            </tr>
+            <tr style="background-color:#ffad33">
+                <td align="left"> Mortality Rate</td>
+                <td align="right">{{mortalityRate}}%</td>
+            </tr>    
+        </tbody>
+    </table>  
+    <br><br><br>
+    <div class="p-3 mb-2 bg-dark text-white">Corona Virus Cases Distribution in {{nameCountry}}</div>
+    <br>
+    <div class="chart-wrapper">
+        <canvas baseChart
+        [colors]="piechartColors"
+        [data]="pieChartData" 
+        [labels]="pieChartLabels" 
+        [chartType]="pieChartType"
+        [options]="pieChartOptions"
+        [plugins]="pieChartPlugins"
+        [legend]="pieChartLegend">
+    </canvas>
+    </div>
+    <br><br><br>
+    <div class="p-3 mb-2 bg-dark text-white">Daily Corona Virus Cases in  {{nameCountry}}</div>
+    <br>  
+    <div class="chart-wrapper">
+        <canvas baseChart 
+        [colors]="barChartColors"
+        [datasets]="barChartData"
+        [labels]="barChartLabels"
+        [options]="barChartOptions"
+        [plugins]="barChartPlugins"
+        [legend]="barChartLegend"
+        [chartType]="barChartType">
+      </canvas>
+    </div>
+    
+    <br><br><br>
+    <div class="p-3 mb-2 bg-dark text-white">Total Corona Virus Cases in  {{nameCountry}}</div>
+    
+    <div class="chartjs-block">
+        <canvas baseChart 
+            [datasets]="lineChartData" 
+            [labels]="lineChartLabels" 
+            [options]="lineChartOptions"
+            [colors]="lineChartColor" 
+            [legend]="lineChartLegend" 
+            [chartType]="lineChartType" 
+            [plugins]="lineChartPlugins">
+        </canvas>
+    </div>
+
+
+
+    <br><br><br>
+
+    <div class="p-3 mb-2 bg-dark text-white" align="center">Data Source:
+        <a href="https://covid19api.com/">COVID-19 API</a>
+        /
+        <a href = "https://coronavirus.jhu.edu/map.html">Johns Hopkins CSSE</a>
+        //
+        <a href="https://corona.lmao.ninja/">disease.sh</a>
+        
+    </div>
+
+</div>
