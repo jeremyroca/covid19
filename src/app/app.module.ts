@@ -14,6 +14,7 @@ import {HttpClient} from '@angular/common/http';
 import { ChartsModule } from 'ng2-charts';
 import { DatePipe } from '@angular/common';
 import { CountryComponent } from './country/country.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -32,6 +33,7 @@ import { CountryComponent } from './country/country.component';
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFirestoreModule,
     HttpClientModule,
+    FormsModule,
     ChartsModule,
   
     

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DatePipe, Location } from '@angular/common';
 import { Country, SpecificCountry, Summary, User } from '../user.model';
 import { ServiceService } from '../service.service';
@@ -7,6 +7,10 @@ import { ChartType, ChartOptions, ChartDataSets } from 'chart.js';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip, Color } from 'ng2-charts';
 import { HttpClient } from '@angular/common/http';
 import { CompletionObserver, Observable } from 'rxjs';
+import { AngularFireAuth } from '@angular/fire/auth';
+import { AngularFirestore } from '@angular/fire/firestore';
+import { async } from '@angular/core/testing';
+import { sleep } from 'igniteui-angular-core';
 
 @Component({
   selector: 'app-country',
@@ -71,6 +75,7 @@ public barChartColors: Color[] = [
   lineChartLegend=true;
   lineChartPlugins=[];
   lineChartType:ChartType='line';
+  
 
 
 
@@ -80,29 +85,30 @@ public barChartColors: Color[] = [
   public covidService: ServiceService,
   //private location: Location,
   private http:HttpClient,
-  public datepipe: DatePipe
+  public datepipe: DatePipe,
+  private afAuth: AngularFireAuth, 
+  private router: Router, private firestore: AngularFirestore,
   ) { 
     monkeyPatchChartJsTooltip();
       monkeyPatchChartJsLegend();
       this.getAllData();
+      
+      
+      
   }
 
   ngOnInit(): void {
-
     this.name = this.route.snapshot.params['id'];
-    
     this.date=new Date();
-
-   
-
+    this.country = this.getDatabeginning();
 
   }
 
 
 
-  getAllData() {  
+  async getAllData() {  
     this.covidService.getData().subscribe(  
-      response => {  
+      async response => {  
         this.summary = response;
         
         for (let i in this.summary.Countries) {
@@ -111,36 +117,47 @@ public barChartColors: Color[] = [
               {
                 
                 this.nameCountry = this.summary.Countries[i].Country;
-                this.country = this.covidService.addCountryToGoogle(this.summary.Countries[i]);
-
-               
-
-                this.activeCase = this.country.TotalConfirmed - this.country.TotalRecovered;
-                this.recoveryRate = (this.country.TotalRecovered * 100 / this.country.TotalConfirmed).toFixed(2);
-                this.mortalityRate = (this.country.TotalDeaths * 100 / this.country.TotalConfirmed).toFixed(2);
-                this.pieChartData = [this.country.TotalDeaths , this.country.TotalRecovered, this.country.TotalConfirmed];
+                await this.covidService.addCountryToGoogle(this.summary.Countries[i]);
+                await sleep(1000);
                 
-                this.date.setDate(this.date.getDate() - 1); 
-                this.latest_date =this.datepipe.transform(this.date, 'YYYY-MM-dThh:mm:ss');
-                this.date.setDate(this.date.getDate() + 1); 
-                this.date.setDate(this.date.getDate() - 8); 
-                this.latest_date_7 =this.datepipe.transform(this.date, 'YYYY-MM-d');
-                this.latest_date = this.latest_date!.concat("Z");
-                this.latest_date_7 = this.latest_date_7!.concat("T00:00:00Z");
-                this.url = "https://api.covid19api.com/country/";
-                this.url = this.url.concat(this.country.Slug,"?from=");
-                this.url = this.url.concat(this.latest_date_7,"&to=", this.latest_date); 
-               
-                this.getAllDataCountries(this.url)
-
-                this.url2 ="https://api.covid19api.com/total/dayone/country/";
-                this.url2 = this.url2.concat(this.country.Slug);
-                this.getAllDataDayOne(this.url2);
               }        
         }
       }  
     )  
   }
+
+  refresh(): void {
+    window.location.reload();
+}
+
+
+
+  getContinue(country2 : Country){
+    
+        
+      this.activeCase = country2.TotalConfirmed - country2.TotalRecovered;
+      this.recoveryRate = (country2.TotalRecovered * 100 / country2.TotalConfirmed).toFixed(2);
+      this.mortalityRate = (country2.TotalDeaths * 100 / country2.TotalConfirmed).toFixed(2);
+      this.pieChartData = [country2.TotalDeaths , country2.TotalRecovered, country2.TotalConfirmed];
+      
+      this.date.setDate(this.date.getDate() - 1); 
+      this.latest_date =this.datepipe.transform(this.date, 'YYYY-MM-dThh:mm:ss');
+      this.date.setDate(this.date.getDate() + 1); 
+      this.date.setDate(this.date.getDate() - 8); 
+      this.latest_date_7 =this.datepipe.transform(this.date, 'YYYY-MM-d');
+      this.latest_date = this.latest_date!.concat("Z");
+      this.latest_date_7 = this.latest_date_7!.concat("T00:00:00Z");
+      this.url = "https://api.covid19api.com/country/";
+      this.url = this.url.concat(country2.Slug,"?from=");
+      this.url = this.url.concat(this.latest_date_7,"&to=", this.latest_date); 
+      
+      this.getAllDataCountries(this.url)
+
+      this.url2 ="https://api.covid19api.com/total/dayone/country/";
+      this.url2 = this.url2.concat(country2.Slug);
+      this.getAllDataDayOne(this.url2);
+  }
+
 
 
   getAllDataCountries(s:string) {
@@ -175,7 +192,7 @@ public barChartColors: Color[] = [
 
           tampon = tweekcases[j+1] - tweekcases[j];
           tweekcases2.push(tampon);
-          //console.log(tampon);
+          
         }
         
         this.barChartData = [
@@ -220,6 +237,39 @@ public barChartColors: Color[] = [
         this.lineChartLabels = tweeklabel;
 
       })
+  }
+
+
+    getDatabeginning():Country{
+    
+      let countrytest : Country;
+        countrytest = new Country();
+      this.covidService.getTotal(this.route.snapshot.params['id']).subscribe((total)=>{
+
+      try{
+      //this.country = new Country();
+      countrytest.Slug = total!["name"];
+      countrytest.Country = total!["countryname"];
+      countrytest.NewConfirmed = total!["newconfirmed"];
+      countrytest.NewRecovered = total!["newrecovered"];
+      countrytest.NewDeaths = total!["newdeaths"];
+      countrytest.TotalConfirmed = total!["totalconfirmed"];
+      countrytest.TotalRecovered = total!["totalrecovered"];
+     countrytest.TotalDeaths = total!["totaldeaths"];
+      
+
+      
+      this.getContinue(countrytest);
+      }catch{
+        this.getDatabeginning();
+      }
+
+
+    }); 
+    
+  
+    
+    return countrytest;
   }
 
 

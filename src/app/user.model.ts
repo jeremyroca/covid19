@@ -25,9 +25,15 @@ export class Country extends Global {
     Date: Date;  
     Slug: string;
     ID: string;
+
   
     
 } 
+
+export class addNews {
+    Country : string;
+    Description : string;
+}
 
 
 export class SpecificCountry {

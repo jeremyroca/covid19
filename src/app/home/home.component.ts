@@ -1,11 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ServiceService } from '../service.service';
-import { Country, SpecificCountry, Summary, User } from '../user.model';
+import { addNews, Country, SpecificCountry, Summary, User } from '../user.model';
 import { ChartType, ChartOptions, ChartDataSets } from 'chart.js';
 import { SingleDataSet, Label, monkeyPatchChartJsLegend, monkeyPatchChartJsTooltip, Color } from 'ng2-charts';
 import { DatePipe } from '@angular/common';
 import { fas } from '@fortawesome/free-solid-svg-icons';
+import { sleep } from 'igniteui-angular-core';
 
 
 
@@ -17,6 +18,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 export class HomeComponent implements OnInit {
   
   user!: User;
+  addCountry: string;
+  addDescription: string;
   summary: Summary;
   specificCountries: SpecificCountry;
   activeCase: number;
@@ -213,6 +216,21 @@ export class HomeComponent implements OnInit {
       
       }  
     )  
+  }
+
+
+  addNews(){
+    let news: addNews = {
+      Country : this.addCountry,
+      Description: this.addDescription
+    };
+    console.log(this.addCountry);
+    console.log(this.addDescription);
+    //this.covidService.addNews(news);
+    sleep(2000);
+    this.addDescription = undefined as any;
+    this.addCountry = undefined as any;
+
   }
   
   

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFirestore } from '@angular/fire/firestore';
 import { AngularFireAuth } from '@angular/fire/auth';
 import firebase from 'firebase/app';
-import { Country, User } from './user.model';
+import { addNews, Country, User } from './user.model';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -43,9 +43,9 @@ export class ServiceService {
   }
 
 
-  addCountryToGoogle(country : Country) : Country{
+  async addCountryToGoogle(country : Country){
 
-    this.firestore.collection("countries").doc(country.Slug).get().subscribe((doc) =>{
+    this.firestore.collection("countries").doc(country.Slug).get().subscribe(async (doc) =>{
       if(doc.exists){
 
          
@@ -59,7 +59,8 @@ export class ServiceService {
             mArray[0].totaldeaths != country.TotalDeaths){
 
 
-              this.firestore.collection("countries").doc(country.Slug).set({
+              await this.firestore.collection("countries").doc(country.Slug).set({
+                countryname : country.Country,
                 name: country.Slug,
                 totalconfirmed: country.TotalConfirmed,
                 newconfirmed: country.NewConfirmed,
@@ -76,7 +77,8 @@ export class ServiceService {
         
 
       }else{
-        this.firestore.collection("countries").doc(country.Slug).set({
+        await this.firestore.collection("countries").doc(country.Slug).set({
+          countryname : country.Country,
           name: country.Slug,
           totalconfirmed: country.TotalConfirmed,
           newconfirmed: country.NewConfirmed,
@@ -89,9 +91,6 @@ export class ServiceService {
     })
 
     
-    
-    
-    return country;
   }
 
 
@@ -147,6 +146,15 @@ getDataCountry(s:string): Observable<any> {
 getDataCountryDayOne(s:string): Observable<any> {
   return this.http.get(s).pipe((responseCountry)=> responseCountry);
 }
+
+getTotal(name : string): Observable<any>{
+  return this.firestore.collection("countries").doc(name)
+  .valueChanges();
+
+}
+
+
+
 
 
 
